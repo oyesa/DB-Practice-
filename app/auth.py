@@ -21,11 +21,11 @@ def sign_up():
     firstName = request.form.get("firstName")
     password1 = request.form.get("password1")
     password2 = request.form.get("password2")
-
+    
 #validating user info
-  if len(email)<4:
+  if len(email) < 4:
      flash("Email must be more that three charaters", category="error")
-  elif len(firstName)<5:
+  elif len(firstName) < 5:
      flash("First Name must be more that five charaters", category="error")
   elif password1 != password2:
       flash("Passwords don\'t match", category="error")
@@ -34,6 +34,5 @@ def sign_up():
   else:
   #add user to database
    flash("Account created successfully!", category="success")
-
 
    return render_template("sign_up.html")
