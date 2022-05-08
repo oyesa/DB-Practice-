@@ -1,5 +1,5 @@
 from crypt import methods
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, flash
 
 auth = Blueprint('auth', __name__)
 
@@ -24,15 +24,16 @@ def sign_up():
 
 #validating user info
   if len(email)<4:
-     pass
-  elif len(firstName)<4:
-     pass
-  elif password1 != passwaord2:
-      pass
+     flash("Email must be more that three charaters", category="error")
+  elif len(firstName)<5:
+     flash("First Name must be more that five charaters", category="error")
+  elif password1 != password2:
+      flash("Passwords don\'t match", category="error")
   elif len(password1) < 7:
-      pass
+      flash("Email must be atleast seven charaters", category="error")
   else:
   #add user to database
+   flash("Account created successfully!", category="success")
 
-  
+
    return render_template("sign_up.html")
