@@ -1,13 +1,30 @@
 from crypt import methods
-from flask import Blueprint, render_template, request, flash
+from .models import User
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
+from . import db
 
 auth = Blueprint('auth', __name__)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-  data = request.form
-  print(data)
+  if request.method == 'POST':
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+  #query the database for user info
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+      if check_password_hash(user.password, password):
+        flash('Logged in successfully!', category='success')
+      elif
+        flash('Incorrect password, try again', category='error')
+      else:
+        flash('Email does not exist', category='error')
+
+
   return render_template("login.html")
 
 @auth.route('/logout')
@@ -18,21 +35,29 @@ def logout():
 def sign_up():
   if request.method == 'POST':
     email = request.form.get("email")
-    firstName = request.form.get("firstName")
+    first_name = request.form.get("first_name")
     password1 = request.form.get("password1")
     password2 = request.form.get("password2")
-    
-#validating user info
-  if len(email) < 4:
-     flash("Email must be more that three charaters", category="error")
-  elif len(firstName) < 5:
-     flash("First Name must be more that five charaters", category="error")
-  elif password1 != password2:
-      flash("Passwords don\'t match", category="error")
-  elif len(password1) < 7:
-      flash("Email must be atleast seven charaters", category="error")
-  else:
-  #add user to database
-   flash("Account created successfully!", category="success")
 
-   return render_template("sign_up.html")
+#validating user info
+user = User.query.filter_by(email=email).first()
+if user:
+   flash('Email already exists', category='error')
+elif len(email) < 4:
+     flash("Email must be more that three charaters", category="error")
+elif len(first_name) < 5:
+     flash("First Name must be more that five charaters", category="error")
+elif password1 != password2:
+      flash("Passwords don\'t match", category="error")
+elif len(password1) < 7:
+      flash("Email must be atleast seven charaters", category="error")
+else:
+  #add user to database
+   new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'))
+   db.session.add(new_user)
+   db.session.commit()
+   login_user(new_user, remember=True)
+   flash("Account created successfully!", category="success")  
+    return redirect(url_for('views.home'))
+
+return render_template("sign_up.html")
