@@ -1,4 +1,4 @@
-from crypt import methods
+
 from .models import User, Note
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -22,20 +22,20 @@ def login():
         flash('Logged in successfully!', category='success')
         login_user(user, remember=True)
         return redirect(url_for('views.home'))
-      elif 
+      elif
         flash('Incorrect password, try again', category='error')
       else:
         flash('Email does not exist', category='error')
-
-
   return render_template("login.html", user = current_user)
 
+#login view page
 @auth.route('/logout')
 @login_required
 def logout():
   logout_user()
   return redirect(url_for(auth.login))
 
+#sign-up page
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
   if request.method == 'POST':
@@ -45,18 +45,18 @@ def sign_up():
     password2 = request.form.get("password2")
 
 #validating user info
-user = User.query.filter_by(email=email).first()
-if user:
+  user = User.query.filter_by(email=email).first()
+  if user:
    flash('Email already exists', category='error')
-elif len(email) < 4:
+  elif len(email) < 4:
      flash("Email must be more that three charaters", category="error")
-elif len(first_name) < 5:
+  elif len(first_name) < 5:
      flash("First Name must be more that five charaters", category="error")
-elif password1 != password2:
+  elif password1 != password2:
       flash("Passwords don\'t match", category="error")
-elif len(password1) < 7:
+  elif len(password1) < 7:
       flash("Email must be atleast seven charaters", category="error")
-else:
+  else:
   #add user to database
    new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='sha256'))
    db.session.add(new_user)
@@ -65,4 +65,4 @@ else:
    flash("Account created successfully!", category="success")  
    return redirect(url_for('views.home'))
 
-return render_template("sign_up.html", user=current_user)
+  return render_template("sign_up.html", user=current_user)

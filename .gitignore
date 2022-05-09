@@ -1,3 +1,5 @@
 .vscode
-app/__pycache__
+virtual/
+*pyc
+__pycache__
 app/database.db
